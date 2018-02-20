@@ -106,6 +106,13 @@ def publisher():
 
         rospy.sleep(0.1)
                         
+def callback(data):
+  rospy.loginfo(rospy.get_caller_id() + "I heard %s", data.data)
+
+def listener():
+  rospy.init_node('listener', anonymous=True)
+  rospy.Subscriber("myo_gest", Uint8, callback)
+  rospy.spin()
 
 if __name__ == '__main__':
     publisher()
