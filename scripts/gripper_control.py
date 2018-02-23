@@ -14,11 +14,20 @@ def genCommand(gest, command):
         command.rSP  = 105
         command.rFR  = 25
 
-    if gest==1:   #open/close
-        command.rPR = 255
+    if gest==7: #reset
+        command.rACT = 0;
+
+    if gest==1:   #open
+        command.rPR = 0
 
     if gest==2:    #close
         command.rPR = 255 
+
+    if gest==3:
+        command.rPR = 80
+
+    if gest==4:
+        command.rPR = 180
     
 def gripper_control_sub():
     #rospy.init_node('gripper_control', anonymous=True)
@@ -37,9 +46,12 @@ def callback(data):
 
 if __name__ == '__main__':
     rospy.init_node('gripper_control', anonymous=True)
+    genCommand(7, command)
+    pub.publish(command)
+    time.sleep(1)
     genCommand(6, command)
     pub.publish(command)
-    time.sleep(3)
+    time.sleep(1)
     genCommand(2, command)
     pub.publish(command)
     gripper_control_sub()
