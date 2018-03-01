@@ -1,0 +1,50 @@
+#!/usr/bin/env python
+import roslib; roslib.load_manifest('robotiq_c_model_control')
+from robotiq_c_model_control.msg import _CModel_robot_output  as outputMsg
+import rospy
+import time
+from std_msgs.msg import UInt8 
+#nod som ser nästan likadan ut som gripper_control men subsrcibar på topic JointTorque istället
+
+
+def genCommand(torque, command):  
+    #command = outputMsg.CModel_robot_output();
+    if torque==6:    #activate
+        command.rACT = 1
+        command.rGTO = 1
+        command.rSP  = 105
+        command.rFR  = 25
+
+    if torque==7: #reset
+        command.rACT = 0;
+
+    if torque>10:   #open when force is larger than 10 N.
+        command.rPR = 0
+
+    
+def torque_controller_sub():
+    #rospy.init_node('gripper_control', anonymous=True)
+    rospy.Subscriber("JointTorque", UInt8, callback)      #subsribar på topic joint torque, vilken messagetype fås?
+    rospy.spin()
+
+pub = rospy.Publisher('CModelRobotOutput', outputMsg.CModel_robot_output, queue_size=10)
+command = outputMsg.CModel_robot_output()
+torque = 0  #gest heter nu torque
+
+def callback(data):
+    torque = data.data
+    rospy.loginfo(rospy.get_caller_id() + "I heard %s", torque)
+    genCommand(torque, command)
+    pub.publish(command)
+
+if __name__ == '__main__':
+    rospy.init_node('torque_controller', anonymous=True)
+    genCommand(7, command)
+    pub.publish(command)
+    time.sleep(1)
+    genCommand(6, command)
+    pub.publish(command)
+    time.sleep(1)
+    genCommand(2, command)
+    pub.publish(command)
+    torque_controller_sub()
