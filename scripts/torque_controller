@@ -31,6 +31,7 @@ pub = rospy.Publisher('CModelRobotOutput', outputMsg.CModel_robot_output, queue_
 command = outputMsg.CModel_robot_output()
 torque = [0,0,0,0,0,0,0]  
 prev_torque = [0,0,0,0,0,0,0]  
+threshold = 100
 
 def callback(data):
     rospy.loginfo(rospy.get_caller_id() + "I heard %s", data)
@@ -39,7 +40,7 @@ def callback(data):
 
 #compare torque to previous torque, if different return 1
 def compare(data):
-    prev_torque = torque
+    prev_torque = list(torque)
     torque[0] = data.JointQuantity.a1
     torque[1] = data.JointQuantity.a2
     torque[2] = data.JointQuantity.a3
@@ -47,7 +48,10 @@ def compare(data):
     torque[4] = data.JointQuantity.a5
     torque[5] = data.JointQuantity.a6
     torque[6] = data.JointQuantity.a7
-    if(true)
+    a = 0;
+    for x in range(7)
+        a = a + (torque[x]-prev_torque[x])**2
+    if a>20
         return 1
 
 if __name__ == '__main__':
