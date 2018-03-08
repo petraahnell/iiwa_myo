@@ -13,7 +13,7 @@ pub = rospy.Publisher('CModelRobotOutput', outputMsg.CModel_robot_output, queue_
 command = outputMsg.CModel_robot_output()
 torque = [0,0,0,0,0,0,0]  
 prev_torque = [0,0,0,0,0,0,0]  
-threshold = 100
+threshold = 0.1
 first = True
 
 def gen_command(torque_diff, command):
@@ -21,7 +21,7 @@ def gen_command(torque_diff, command):
     if torque_diff==6: #activate
         command.rACT = 1
         command.rGTO = 1
-        command.rSP  = 105
+        command.rSP  = 170
         command.rFR  = 25
 
     if torque_diff==7: #reset
@@ -36,7 +36,6 @@ def gen_command(torque_diff, command):
     
 def torque_controller_sub():
     rospy.Subscriber("/iiwa/state/JointTorque", JointTorque, callback)
-    time.sleep(5)
     rospy.spin()
 
 def callback(data):
@@ -45,9 +44,7 @@ def callback(data):
 
 #compare torque to previous torque, if different return 1
 def compare(data):
-    if first:
-        time.sleep(2)
-        #first = False
+    global first
     prev_torque = list(torque)
     torque[0] = data.torque.a1
     torque[1] = data.torque.a2
@@ -58,9 +55,14 @@ def compare(data):
     torque[6] = data.torque.a7
     a = 0
     for x in range(7):
-        a = a + (torque[x]-prev_torque[x])**2
+        if first:
+            a=0
+        else:
+            a = a + (torque[x]-prev_torque[x])**2
+    
+    first=False
     if a>threshold:
-        rospy.loginfo("a = %s", a);
+        rospy.loginfo("a = %s", a)
         return 1
 
 if __name__ == '__main__':
@@ -77,4 +79,5 @@ if __name__ == '__main__':
     pub.publish(command)
     time.sleep(3)
 
+    rospy.loginfo("Go!")
     torque_controller_sub()
