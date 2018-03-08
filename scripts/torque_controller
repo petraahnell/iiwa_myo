@@ -5,46 +5,63 @@ import rospy
 import time
 from std_msgs.msg import UInt8 
 #nod som ser nästan likadan ut som gripper_control men subsrcibar på topic JointTorque istället
+#subscribes to the robots JointTorque and publishes to the grippers CModelRobotOutput
 
-
-def genCommand(torque, command):  
+def genCommand(torque_diff, command):
     #command = outputMsg.CModel_robot_output();
-    if torque==6:    #activate
+    if torque_diff==3:    #activate
         command.rACT = 1
         command.rGTO = 1
         command.rSP  = 105
         command.rFR  = 25
 
-    if torque==7: #reset
+    if torque_diff==2: #reset
         command.rACT = 0;
 
-    if torque>10:   #open when force is larger than 10 N.
+    if torque_diff==1:   #open
         command.rPR = 0
 
     
 def torque_controller_sub():
     #rospy.init_node('gripper_control', anonymous=True)
-    rospy.Subscriber("JointTorque", UInt8, callback)      #subsribar på topic joint torque, vilken messagetype fås?
+    rospy.Subscriber("/iiwa/state/JointTorque", JointTorque, callback)      #subsribar på topic joint torque, vilken messagetype fås?
     rospy.spin()
 
 pub = rospy.Publisher('CModelRobotOutput', outputMsg.CModel_robot_output, queue_size=10)
 command = outputMsg.CModel_robot_output()
-torque = 0  #gest heter nu torque
+torque = [0,0,0,0,0,0,0]  
+prev_torque = [0,0,0,0,0,0,0]  
+threshold = 100
 
 def callback(data):
-    torque = data.data
-    rospy.loginfo(rospy.get_caller_id() + "I heard %s", torque)
-    genCommand(torque, command)
-    pub.publish(command)
+    rospy.loginfo(rospy.get_caller_id() + "I heard %s", data)
+    genCommand(compare(data), command)
+    #pub.publish(command)
+
+#compare torque to previous torque, if different return 1
+def compare(data):
+    prev_torque = list(torque)
+    torque[0] = data.JointQuantity.a1
+    torque[1] = data.JointQuantity.a2
+    torque[2] = data.JointQuantity.a3
+    torque[3] = data.JointQuantity.a4
+    torque[4] = data.JointQuantity.a5
+    torque[5] = data.JointQuantity.a6
+    torque[6] = data.JointQuantity.a7
+    a = 0;
+    for x in range(7)
+        a = a + (torque[x]-prev_torque[x])**2
+    if a>20
+        return 1
 
 if __name__ == '__main__':
     rospy.init_node('torque_controller', anonymous=True)
-    genCommand(7, command)
-    pub.publish(command)
-    time.sleep(1)
-    genCommand(6, command)
-    pub.publish(command)
-    time.sleep(1)
     genCommand(2, command)
-    pub.publish(command)
+    #pub.publish(command)
+    time.sleep(1)
+    genCommand(3, command)
+    #pub.publish(command)
+    time.sleep(1)
+    genCommand(1, command)
+    #pub.publish(command)
     torque_controller_sub()
