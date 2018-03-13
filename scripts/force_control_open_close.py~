@@ -11,7 +11,8 @@ from iiwa_msgs.msg import CartesianQuantity
 
 pub = rospy.Publisher('CModelRobotOutput', outputMsg.CModel_robot_output, queue_size=10)
 command = outputMsg.CModel_robot_output()
-threshold = 1
+threshold_a = 1   #kraft som behövs för att öppna grippern (z-riktning)
+threshold_b = 1   #kraft som behövs för att stänga grippern (x-riktning)
 
 
 def gen_command(torque_diff, command):
@@ -21,6 +22,7 @@ def gen_command(torque_diff, command):
         command.rGTO = 1
         command.rSP  = 170
         command.rFR  = 25
+        command.rPR = 0     #ny rad för att bestämma rPR värde innnan get(data) funktionen
 
     if torque_diff==7: #reset
         command.rACT = 0;
@@ -42,13 +44,19 @@ def callback(data):
 
 
 def get(data):
-    a = data.z
-    b=data.x      
+    a = data.z    
+    b = data.x  
     
   
-    if abs(a)>threshold:   #if the force in z-direction is larger than threshold, return 1 to open gripper.
+    if abs(a) > threshold_a AND command.rPR == 255:   #if the force in z-direction is larger than threshold and the gripper is closed, return 1 to open gripper.
         rospy.loginfo("a = %s", a)
-        return 1
+        number=1
+
+    elif abs(b) > threshold_b AND command.rPR == 0: #if the force in x-direction is larger than threshold and the gripper is closed, return 2 to close gripper.
+        rospy.loginfo("b = %s", b)
+        number=2
+    return number
+    
 
 if __name__ == '__main__':
     rospy.init_node('force_control', anonymous=True)
@@ -60,9 +68,9 @@ if __name__ == '__main__':
     pub.publish(command)
     time.sleep(3)
 
-    gen_command(2, command)
-    pub.publish(command)
-    time.sleep(3)
+    #gen_command(2, command)
+    #pub.publish(command)
+    #time.sleep(3)
 
     rospy.loginfo("Go!")
     force_control_sub()

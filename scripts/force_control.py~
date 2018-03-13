@@ -8,15 +8,14 @@ from iiwa_msgs.msg import CartesianQuantity
 
 '''
 nod som ser nastan likadan ut som gripper_control men subsrcibar pa topic iiwa/state/CartesianWrench istallet
-#subscribes to the robots iiwa/state/CartesianWrench and publishes to the grippers CModelRobotOutput
-#oppnar med torque, stanger med kraft i x riktning
+subscribes to the robots iiwa/state/CartesianWrench and publishes to the grippers CModelRobotOutput
+opnnar och stanger med kraft i z och x-riktning
 '''
-
 
 pub = rospy.Publisher('CModelRobotOutput', outputMsg.CModel_robot_output, queue_size=10)
 command = outputMsg.CModel_robot_output()
-threshold_a = 1   #vridmoment som behövs för att öppna grippern (riktning?)
-threshold_b = 1   #kraft i x-riktning som behövs för att stänga grippern
+threshold_a = 1   #kraft som behövs för att öppna grippern (z-riktning)
+threshold_b = 1   #kraft som behövs för att stänga grippern (x-riktning)
 
 
 def gen_command(torque_diff, command):
@@ -27,7 +26,6 @@ def gen_command(torque_diff, command):
         command.rSP  = 170
         command.rFR  = 25
         command.rPR = 0     #ny rad för att bestämma rPR värde innnan get(data) funktionen
-
 
     if torque_diff==7: #reset
         command.rACT = 0;
@@ -49,16 +47,19 @@ def callback(data):
 
 
 def get(data):
-    a = data.a              #vilket vridmoment ger utlag vid a?       
-    b = data.x              #kraft i x-riktning
+    a = data.z    
+    b = data.x  
+    
   
-    if abs(a) > threshold_a and command.rPR == 255:   #if the torque in direction is larger than threshold_a and the gripper is closed, return 1 to open gripper.
+    if abs(a) > threshold_a and command.rPR == 255:   #if the force in z-direction is larger than threshold_a and the gripper is closed, return 1 to open gripper.
         rospy.loginfo("a = %s", a)
-        number = 1
-    elif abs(b) > threshold_b and command.rPR == 0    #if the force in x-direction is larger than threshold_b and the gripper is open, return 2 to open gripper.
+        number=1
+
+    elif abs(b) > threshold_b and command.rPR == 0: #if the force in x-direction is larger than threshold_b and the gripper is closed, return 2 to close gripper.
         rospy.loginfo("b = %s", b)
-        number = 2
+        number=2
     return number
+    
 
 if __name__ == '__main__':
     rospy.init_node('force_control', anonymous=True)
