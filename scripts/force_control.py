@@ -14,8 +14,8 @@ opnnar och stanger med kraft i z och x-riktning
 
 pub = rospy.Publisher('CModelRobotOutput', outputMsg.CModel_robot_output, queue_size=10)
 command = outputMsg.CModel_robot_output()
-threshold_a = 10   #kraft som behövs för att öppna grippern (z-riktning)
-threshold_b = 1 0  #kraft som behövs för att stänga grippern (x-riktning)
+threshold_a = 10   #kraft som behovs for att oppna grippern (z-riktning)
+threshold_b = 10  #kraft som behovs för att stanga grippern (x-riktning)
 
 
 def gen_command(torque_diff, command):
@@ -25,7 +25,7 @@ def gen_command(torque_diff, command):
         command.rGTO = 1
         command.rSP  = 170
         command.rFR  = 25
-        command.rPR = 0     #ny rad för att bestämma rPR värde innnan get(data) funktionen
+        command.rPR = 0     #ny rad for att bestamma rPR varde innnan get(data) funktionen
 
     if torque_diff==7: #reset
         command.rACT = 0;
@@ -53,12 +53,12 @@ def get(data):
   
     if abs(a) > threshold_a and command.rPR == 255:   #if the force in z-direction is larger than threshold_a and the gripper is closed, return 1 to open gripper.
         rospy.loginfo("a = %s", a)
-        number=1
+        return 1
 
     elif abs(b) > threshold_b and command.rPR == 0: #if the force in x-direction is larger than threshold_b and the gripper is closed, return 2 to close gripper.
         rospy.loginfo("b = %s", b)
-        number=2
-    return number
+        return 2
+    
     
 
 if __name__ == '__main__':
