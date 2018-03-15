@@ -30,7 +30,7 @@ def compare(data):
     diff = 0
     for x in range(7):
         diff = (torque[x]-prev_torque[x])**2
-        if diff> 1:
+        if diff>0.05:
             rospy.loginfo("diff on %s = %s", x, diff)
 
 if __name__ == '__main__':

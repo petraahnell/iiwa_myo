@@ -19,17 +19,17 @@ def gen_command(gest, command):
     if gest==7: #reset
         command.rACT = 0
 
-    if gest==1: #open
+    if gest==4: #open
         command.rPR = 0
 
-    if gest==2: #close
+    if gest==1: #close
         command.rPR = 255 
 
-    if gest==3: #half opened
-        command.rPR = 80
+    #if gest==3: #half opened
+        #command.rPR = 80
 
-    if gest==4: #almost closed
-        command.rPR = 180
+    #if gest==4: #almost closed
+        #command.rPR = 180
     
 def gripper_control_sub():
     """Subscribe to gestures from myo"""

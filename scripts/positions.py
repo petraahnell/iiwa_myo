@@ -25,12 +25,12 @@ def handover():
 	handover = JointQuantity()
 
 	handover.a1 = 2.6245
-	handover.a2 = -0.6626
+	handover.a2 = -0.8626
 	handover.a3 = 0.4108
 	handover.a4 = 1.8504
 	handover.a5 = -0.2260
 	handover.a6 = 0.9733
-	handover.a7 = 0.1937
+	handover.a7 = 1.8
 	
 	return handover
 

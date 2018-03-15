@@ -15,8 +15,8 @@ nod som ser nastan likadan ut som gripper_control men subsrcibar pa topic iiwa/s
 
 pub = rospy.Publisher('CModelRobotOutput', outputMsg.CModel_robot_output, queue_size=10)
 command = outputMsg.CModel_robot_output()
-threshold_a = 10   #vridmoment som behovs for att oppna grippern
-threshold_b = 10   #kraft i x-riktning som behovs for att stanga grippern
+threshold_a = 5   #vridmoment som behovs for att oppna grippern
+threshold_b = 15   #kraft i x-riktning som behovs for att stanga grippern
 
 
 def gen_command(torque_diff, command):
@@ -26,7 +26,7 @@ def gen_command(torque_diff, command):
         command.rGTO = 1
         command.rSP  = 170
         command.rFR  = 25
-        command.rPR = 0     #ny rad för att bestamma rPR varde innnan get(data) funktionen
+        command.rPR = 0     #ny rad for att bestamma rPR varde innnan get(data) funktionen
 
 
     if torque_diff==7: #reset
@@ -49,13 +49,13 @@ def callback(data):
 
 
 def get(data):
-    a = data.wrench.torque.y              #vilket vridmoment ger utlag vid a?       
+    a = data.wrench.torque.x              #vilket vridmoment ger utlag vid a?       
     b = data.wrench.force.x              #kraft i x-riktning
   
     if abs(a) > threshold_a and command.rPR == 255:   #if the torque in direction is larger than threshold_a and the gripper is closed, return 1 to open gripper.
         rospy.loginfo("a = %s", a)
         return 1
-    elif abs(b) > threshold_b and command.rPR == 0    #if the force in x-direction is larger than threshold_b and the gripper is open, return 2 to open gripper.
+    elif abs(b) > threshold_b and command.rPR == 0 :   #if the force in x-direction is larger than threshold_b and the gripper is open, return 2 to open gripper.
         rospy.loginfo("b = %s", b)
         return 2
     

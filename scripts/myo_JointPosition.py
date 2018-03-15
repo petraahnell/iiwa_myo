@@ -10,10 +10,12 @@ from iiwa_msgs.msg import JointQuantity
 import positions as p
 from std_msgs.msg import UInt8
 
+
 def myo_control_sub():
     """Subscribe to gestures from myo"""
     rospy.Subscriber("myo_gest", UInt8, callback)
-    rospy.init_node('command_JointPosition', anonymous =False)
+    rospy.init_node('myo_JointPosition', anonymous =False)
+
     rospy.spin()
 
 def callback(data):
@@ -21,11 +23,11 @@ def callback(data):
     command = data.data
     rospy.loginfo(rospy.get_caller_id() + "I heard %s", command)
 
-def talker():
+
     posPub = rospy.Publisher('iiwa/command/JointPosition', JointPosition, queue_size=10)
     
 
-    rate = rospy.Rate(0.5) # 10hz
+    #rate = rospy.Rate(0.5) # 10hz
     x = 0
     rospy.loginfo("Talker started")
     #while not rospy.is_shutdown():
@@ -34,32 +36,48 @@ def talker():
     #command = raw_input('Enter a valid position: ') #Positions can be found in the file positions.py
     if command == 3:
         pos.position = p.home()
-    elif command == 4:
+        pos.header= Header()
+        pos.header.stamp = rospy.Time.now()
+        pos.header.frame_id = ''
+        pos.header.seq=x
+        rospy.loginfo(pos.position)
+        rospy.loginfo("Position will be transmitted")
+        posPub.publish(pos)
+        rospy.loginfo("Position has been transmitted")
+    elif command == 2:
         pos.position = p.handover()
-    elif command == 5:
+        pos.header= Header()
+        pos.header.stamp = rospy.Time.now()
+        pos.header.frame_id = ''
+        pos.header.seq=x
+        rospy.loginfo(pos.position)
+        rospy.loginfo("Position will be transmitted")
+        posPub.publish(pos)
+        rospy.loginfo("Position has been transmitted")
+    elif command == 9:
         pos.position = p.test()
+        pos.header= Header()
+        pos.header.stamp = rospy.Time.now()
+        pos.header.frame_id = ''
+        pos.header.seq=x
+        rospy.loginfo(pos.position)
+        rospy.loginfo("Position will be transmitted")
+        posPub.publish(pos)
+        rospy.loginfo("Position has been transmitted")
   
 
     rospy.loginfo(str(x))
 
     x = x + 1
 
-    pos.header= Header()
-    pos.header.stamp = rospy.Time.now()
-    pos.header.frame_id = ''
-    pos.header.seq=x
-    rospy.loginfo(pos.position)
-    rospy.loginfo("Position will be transmitted")
-    posPub.publish(pos)
-    rospy.loginfo("Position has been transmitted")
 		
-    rate.sleep()
+    #rate.sleep()
 
 
 if __name__ == '__main__':
      myo_control_sub()
      try:
-         talker()
+         pass
          #velocity_talker()
      except rospy.ROSInterruptException:
          pass
