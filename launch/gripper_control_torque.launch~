@@ -1,0 +1,18 @@
+<launch>
+    <node 
+        pkg="robotiq_c_model_control" 
+        name="CModelRtuNode" 
+        type="CModelRtuNode.py"
+    />
+    <node 
+        pkg="robotiq_c_model_control" 
+        name="CModelSimpleController" 
+        type="CModelSimpleController.py"
+        launch-prefix="xterm -e"
+    />
+    <node 
+        pkg="iiwa_myo" 
+        name="torque_control" 
+        type="torque_control.py"
+    />
+</launch>
