@@ -11,13 +11,14 @@ from iiwa_msgs.msg import JointPosition
 '''
 nod som ser nastan likadan ut som gripper_control men subsrcibar pa topic iiwa/state/CartesianWrench istallet
 subscribes to the robots iiwa/state/CartesianWrench and publishes to the grippers CModelRobotOutput
-opnnar med vridmoment kring i x
+stanga med kraft i x-riktning
+In the handoverposition the forces are (-5.8,-16.7, -0.05) and the torque is (0.90, -0.62, -0.05). Use force y and torque x.
 '''
 
 pub = rospy.Publisher('CModelRobotOutput', outputMsg.CModel_robot_output, queue_size=10)
 command = outputMsg.CModel_robot_output()
-threshold_x = 800   #vridmoment som behovs for att oppna grippern (z-riktning)
-
+threshold_z = 5   #kraft som behovs for att stanga grippern (x-riktning,)
+threshold_y = -20 
 
 def gen_command(torque_diff, command):
 
@@ -49,15 +50,24 @@ def callback1(data):
 
 
 def get(data):
-    torque_x = data.wrench.torque.x    # is this really the correct one?
-    
+    force_z = data.wrench.force.z    
+    force_y = data.wrench.force.y    
   
-    if abs(torque_x) > threshold_x and command.rPR == 255:   #if the torque in x-direction is larger than threshold_x and the gripper is closed, return 1 to open gripper.
-        rospy.loginfo("torque x = %s", torque_x)
+    if force_y < threshold_y and command.rPR == 0:   #if the force in y-direction is larger than threshold_y and the gripper is open, return 2 to close gripper.
+        rospy.loginfo("force y = %s", force_y)
+        return 2
+
+    elif force_z > threshold_z and command.rPR == 255:   
+        rospy.loginfo("force z = %s", force_z)
         return 1
     
 
 if __name__ == '__main__':
-    rospy.init_node('force_control', anonymous=True) 
+    rospy.init_node('Give_6', anonymous=True) 
+    gen_command(7, command)
+    pub.publish(command)
+    gen_command(6, command)
+    pub.publish(command)
+
     rospy.loginfo("Go!")
     force_control_sub()

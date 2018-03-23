@@ -6,9 +6,9 @@
         args="/dev/ttyUSB0"
     />
     <node 
-        pkg="iiwa_myo" 
-        name="endeffector_torque_control" 
-        type="endeffector_torque_control.py"
+        pkg="robotiq_c_model_control" 
+        name="CModelSimpleController" 
+        type="CModelSimpleController.py"
         launch-prefix="xterm -e"
     />
     <node 

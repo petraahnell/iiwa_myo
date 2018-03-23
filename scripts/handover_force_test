@@ -11,12 +11,15 @@ from iiwa_msgs.msg import JointPosition
 '''
 nod som ser nastan likadan ut som gripper_control men subsrcibar pa topic iiwa/state/CartesianWrench istallet
 subscribes to the robots iiwa/state/CartesianWrench and publishes to the grippers CModelRobotOutput
-opnnar med kraft i z-riktning
+opnnar och stanger med kraft i z och x-riktning
 '''
 
 pub = rospy.Publisher('CModelRobotOutput', outputMsg.CModel_robot_output, queue_size=10)
 command = outputMsg.CModel_robot_output()
-threshold_z = 800   #kraft som behovs for att oppna grippern (z-riktning)
+threshold_z = 5   #kraft som behovs for att oppna grippern (z-riktning)
+threshold_x = 5   #kraft som behovs for att stanga grippern (x-riktning)
+prev_force_z = 0
+prev_force_x = 0 
 
 
 def gen_command(torque_diff, command):
@@ -40,24 +43,47 @@ def gen_command(torque_diff, command):
     
 def force_control_sub():
     rospy.Subscriber("/iiwa/state/CartesianWrench", WrenchStamped, callback1)     
-    rospy.spin()     
-   
+    rospy.spin()
+         
 
 def callback1(data):
     gen_command(get(data), command)
-    pub.publish(command)
-
+     
 
 def get(data):
     force_z = data.wrench.force.z    
+    force_x = data.wrench.force.x  
+    global prev_force_z
+    global prev_force_x
+    force_z_diff = abs(force_z-prev_force_z)
+    force_x_diff = abs(force_x-prev_force_x)
+    prev_force_z = force_z
+    prev_force_x = force_x
     
   
-    if abs(force_z) > threshold_z and command.rPR == 255:   #if the force in z-direction is larger than threshold_z and the gripper is closed, return 1 to open gripper.
-        rospy.loginfo("force z = %s", force_z)
+    if force_z_diff > threshold_z and command.rPR == 255:   #if the force in z-direction is larger than threshold_a and the gripper is closed, return 1 to open gripper.
+        rospy.loginfo("force z diff = %s", force_z_diff)
         return 1
+
+    elif force_x_diff > threshold_x and command.rPR == 0: #if the force in x-direction is larger than threshold_b and the gripper is closed, return 2 to close gripper.
+        rospy.loginfo("force diff x = %s", force_x_diff)
+        return 2
+    
     
 
 if __name__ == '__main__':
-    rospy.init_node('force_control', anonymous=True) 
+    rospy.init_node('force_control', anonymous=True)
+    gen_command(7, command)
+    pub.publish(command)
+    time.sleep(3)
+
+    gen_command(6, command)
+    pub.publish(command)
+    time.sleep(3) 
+
+    #gen_command(2, command)
+    #pub.publish(command)
+    #time.sleep(3)
+
     rospy.loginfo("Go!")
     force_control_sub()

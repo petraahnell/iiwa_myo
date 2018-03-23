@@ -54,9 +54,6 @@ def get_position(data2):
     a6 = data2.position.a6
     a7 = data2.position.a7
     if a1 > 2.6 and a1 < 2.7: 
-        '''if something:
-            time.sleep(2)
-            something= False'''
         return 1
     else:
         return 0

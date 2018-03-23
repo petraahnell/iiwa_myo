@@ -24,6 +24,20 @@ def test():
 def handover():
 	handover = JointQuantity()
 
+	handover.a1 = 0.0
+	handover.a2 = 1.2394
+	handover.a3 = 0.0
+	handover.a4 = -0.8913
+	handover.a5 = 0.0
+	handover.a6 = -0.5569
+	handover.a7 = 1.9349
+	
+	return handover
+
+
+def handover_old():
+	handover = JointQuantity()
+
 	handover.a1 = 2.6245
 	handover.a2 = -0.8626
 	handover.a3 = 0.4108

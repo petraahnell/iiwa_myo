@@ -7,8 +7,8 @@
     />
     <node 
         pkg="iiwa_myo" 
-        name="endeffector_torque_control" 
-        type="endeffector_torque_control.py"
+        name="force_control" 
+        type="force_control.py"
         launch-prefix="xterm -e"
     />
     <node 

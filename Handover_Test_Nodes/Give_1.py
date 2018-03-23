@@ -28,23 +28,28 @@ def gen_command(gest, command):
 
   
 def gripper_control_sub():
-    """Subscribe to gestures from myo"""
+    """Subscribe to orientation from myo"""
     rospy.Subscriber("/myo_raw/myo_ori_deg", Vector3, callback)
     rospy.spin()
 
 def gripper_init():
     """Ititializes the node and activates the gripper"""
     rospy.init_node('gripper_control', anonymous=True)
+    gen_command(7, command)
+    pub.publish(command)
+    gen_command(6, command)
+    pub.publish(command)
     gen_command(4, command)
     pub.publish(command)
 
 def callback(data):
-    """When recieving a gesture, print it in the terminal and publish a command to the gripper."""
     roll = data.z
-    rospy.loginfo(rospy.get_caller_id() + "I heard %s", roll)
-
+    rospy.loginfo(rospy.get_caller_id() + "Roll: %s", roll)
     if roll < -45:
         gen_command(20, command)
+        pub.publish(command)
+    elif roll > 0:
+        gen_command(4, command)
         pub.publish(command)
 
 if __name__ == '__main__':
