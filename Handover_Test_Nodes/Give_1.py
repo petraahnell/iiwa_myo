@@ -37,8 +37,11 @@ def gripper_init():
     rospy.init_node('gripper_control', anonymous=True)
     gen_command(7, command)
     pub.publish(command)
+    time.sleep(2)
     gen_command(6, command)
     pub.publish(command)
+    time.sleep(2)
+
     gen_command(4, command)
     pub.publish(command)
 
@@ -48,9 +51,9 @@ def callback(data):
     if roll < -45:
         gen_command(20, command)
         pub.publish(command)
-    elif roll > 0:
+    '''elif roll > 0:
         gen_command(4, command)
-        pub.publish(command)
+        pub.publish(command)'''
 
 if __name__ == '__main__':
     gripper_init()
