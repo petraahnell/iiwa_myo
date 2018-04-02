@@ -9,51 +9,49 @@ from geometry_msgs.msg import Vector3
 command = outputMsg.CModel_robot_output()
 pub = rospy.Publisher('CModelRobotOutput', outputMsg.CModel_robot_output, queue_size=10)
 
-def gen_command(gest, command):  
-    """Generates a gripper command given a certain gesture"""
-    if gest==6: #activate
+def gen_command(value, command):  
+    """Generates a gripper command given a certain value"""
+    if value==6: #activate
         command.rACT = 1
         command.rGTO = 1
         command.rSP  = 105
         command.rFR  = 25
 
-    if gest==7: #reset
+    if value==7: #reset
         command.rACT = 0
 
-    if gest==4: #open open palm
+    if value==4: #open 
         command.rPR = 0
 
-    if gest== 20: #close
+    if value==2: #close
         command.rPR = 255 
 
   
 def gripper_control_sub():
     """Subscribe to orientation from myo"""
-    rospy.Subscriber("/myo_raw/myo_ori_deg", Vector3, callback)
+    rospy.Subscriber("/myo_raw/myo_ori_deg", Vector3, callback, queue_size=1, buff_size=65536)
     rospy.spin()
 
 def gripper_init():
     """Ititializes the node and activates the gripper"""
-    rospy.init_node('gripper_control', anonymous=True)
+    rospy.init_node('take_pitch', anonymous=True)
     gen_command(7, command)
     pub.publish(command)
-    time.sleep(2)
     gen_command(6, command)
     pub.publish(command)
-    time.sleep(2)
-
-    gen_command(4, command)
+    gen_command(2, command)
     pub.publish(command)
 
 def callback(data):
-    roll = data.z
-    rospy.loginfo(rospy.get_caller_id() + "Roll: %s", roll)
-    if roll < -45:
-        gen_command(20, command)
-        pub.publish(command)
-    '''elif roll > 0:
+    pitch = data.y
+    rospy.loginfo("Pitch: %s", pitch)
+
+    if pitch < -10:
         gen_command(4, command)
-        pub.publish(command)'''
+        pub.publish(command)
+        value = int(raw_input("Write 2 for close: "))
+        gen_command(value, command)
+        pub.publish(command)
 
 if __name__ == '__main__':
     gripper_init()
