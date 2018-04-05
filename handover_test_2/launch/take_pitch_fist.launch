@@ -1,0 +1,15 @@
+<launch>
+    <node 
+        pkg="iiwa_myo" 
+        name="take_pitch_fist" 
+        type="take_pitch_fist.py"
+        launch-prefix="xterm -e"
+    />
+    <node 
+        pkg="rosbag" 
+        name="rosbag_record" 
+        type="record"
+        args="record -o /home/iiwacomputer/catkin_ws/src/iiwa_myo/handover_test_2/test_2_bagfiles/take_pitch_fist /myo_raw/myo_ori_deg"
+    />
+</launch>
+
