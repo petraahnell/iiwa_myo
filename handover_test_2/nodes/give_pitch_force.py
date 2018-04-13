@@ -8,11 +8,11 @@ from geometry_msgs.msg import Vector3
 from geometry_msgs.msg import WrenchStamped
 from iiwa_msgs.msg import JointVelocity
 from iiwa_msgs.msg import JointPosition
+import test_variables as v
 
 command = outputMsg.CModel_robot_output()
 pub = rospy.Publisher('CModelRobotOutput', outputMsg.CModel_robot_output, queue_size=10)
 force_y = 0
-
 def gen_command(value, command):  
     """Generates a gripper command given a certain value"""
     if value==6: #activate
@@ -53,8 +53,8 @@ def callback(data):
     pitch = data.y
     rospy.loginfo("Pitch: %s", pitch)
 
-    if pitch < -10:
-        if force_y < -20:
+    if pitch < v.pitch_lim:
+        if  force_y < force_y_lim:
             gen_command(2, command)
             pub.publish(command)
             value = int(raw_input("Write 4 for open: "))

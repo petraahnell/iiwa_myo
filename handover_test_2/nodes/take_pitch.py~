@@ -5,7 +5,6 @@ import rospy
 import time
 from std_msgs.msg import UInt8 
 from geometry_msgs.msg import Vector3
-import test_variables as v
 
 command = outputMsg.CModel_robot_output()
 pub = rospy.Publisher('CModelRobotOutput', outputMsg.CModel_robot_output, queue_size=10)
@@ -21,7 +20,7 @@ def gen_command(value, command):
     if value==7: #reset
         command.rACT = 0
 
-    if value==4: #open
+    if value==4: #open 
         command.rPR = 0
 
     if value==2: #close
@@ -35,22 +34,22 @@ def gripper_control_sub():
 
 def gripper_init():
     """Ititializes the node and activates the gripper"""
-    rospy.init_node('give_roll', anonymous=True)
+    rospy.init_node('take_pitch', anonymous=True)
     gen_command(7, command)
     pub.publish(command)
     gen_command(6, command)
     pub.publish(command)
-    gen_command(4, command)
+    gen_command(2, command)
     pub.publish(command)
 
 def callback(data):
-    roll = data.z
-    rospy.loginfo("Roll: %s", roll)
+    pitch = data.y
+    rospy.loginfo("Pitch: %s", pitch)
 
-    if roll < v.roll_lim:
-        gen_command(2, command)
+    if pitch < -10:
+        gen_command(4, command)
         pub.publish(command)
-        value = int(raw_input("Write 4 for open: "))
+        value = int(raw_input("Write 2 for close: "))
         gen_command(value, command)
         pub.publish(command)
 

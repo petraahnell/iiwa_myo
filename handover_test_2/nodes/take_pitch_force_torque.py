@@ -8,6 +8,7 @@ from geometry_msgs.msg import Vector3
 from geometry_msgs.msg import WrenchStamped
 from iiwa_msgs.msg import JointVelocity
 from iiwa_msgs.msg import JointPosition
+import test_variables as v
 
 command = outputMsg.CModel_robot_output()
 pub = rospy.Publisher('CModelRobotOutput', outputMsg.CModel_robot_output, queue_size=10)
@@ -55,8 +56,8 @@ def callback(data):
     pitch = data.y
     rospy.loginfo("Pitch: %s", pitch)
 
-    if pitch < -10:
-        if torque_x > 1.2 or force_z > 5:
+    if pitch < v.pitch_lim:
+        if torque_x > v.torque_x_lim or v.force_z_lim > 5:
             gen_command(4, command)
             pub.publish(command)
             value = int(raw_input("Write 2 for close: "))

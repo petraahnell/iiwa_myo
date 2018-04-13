@@ -5,7 +5,6 @@ import rospy
 import time
 from std_msgs.msg import UInt8 
 from geometry_msgs.msg import Vector3
-import test_variables as v
 
 command = outputMsg.CModel_robot_output()
 pub = rospy.Publisher('CModelRobotOutput', outputMsg.CModel_robot_output, queue_size=10)
@@ -47,7 +46,7 @@ def callback(data):
     roll = data.z
     rospy.loginfo("Roll: %s", roll)
 
-    if roll < v.roll_lim:
+    if roll < -45:
         gen_command(2, command)
         pub.publish(command)
         value = int(raw_input("Write 4 for open: "))

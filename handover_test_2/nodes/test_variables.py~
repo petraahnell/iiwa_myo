@@ -1,0 +1,8 @@
+#!/usr/bin/env python
+
+down=-60
+up=-102
+
+roll_lim = down+(up-down)/2
+pitch_lim = -10
+
