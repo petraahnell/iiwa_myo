@@ -13,7 +13,7 @@ def talker():
     posPub = rospy.Publisher('iiwa/command/JointPosition', JointPosition, queue_size=10)
     rospy.init_node('command_JointPosition', anonymous =False)
 
-    rate = rospy.Rate(0.5) # 10hz
+    rate = rospy.Rate(0.5) 
     x = 0
     rospy.loginfo("Talker started")
     while not rospy.is_shutdown():

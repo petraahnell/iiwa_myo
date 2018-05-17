@@ -50,14 +50,14 @@ def gripper_init():
     pub.publish(command)
 
 def callback(data):
-    global toque_x
+    global torque_x
     global force_z
 
     pitch = data.y
-    rospy.loginfo("Pitch: %s", pitch)
+    rospy.loginfo("Pitch: %s, Force: %s, Torque: %s", pitch, force_z, torque_x)
 
     if pitch < v.pitch_lim:
-        if torque_x > v.torque_x_lim or v.force_z_lim > 5:
+        if torque_x > v.torque_x_lim or force_z > v.force_z_lim :
             gen_command(4, command)
             pub.publish(command)
             value = int(raw_input("Write 2 for close: "))
@@ -65,7 +65,7 @@ def callback(data):
             pub.publish(command)
 
 def callback_force_torque(data):
-    global toque_x
+    global torque_x
     global force_z
     torque_x = data.wrench.torque.x
     force_z = data.wrench.force.z

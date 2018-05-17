@@ -54,7 +54,7 @@ def callback(data):
     rospy.loginfo("Pitch: %s", pitch)
 
     if pitch < v.pitch_lim:
-        if  force_y < force_y_lim:
+        if  force_y < v.force_y_lim:
             gen_command(2, command)
             pub.publish(command)
             value = int(raw_input("Write 4 for open: "))

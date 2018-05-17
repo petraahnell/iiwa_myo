@@ -60,3 +60,12 @@ def home():
 	home.a7 = 0
 
 	return home
+
+'''
+rostopic pub /iiwa/command/JointPosition iiwa_msgs/JointPosition "header:
+  seq: 0
+  stamp:
+    secs: 0
+    nsecs: 0
+  frame_id: ''
+position: {a1: 0.0104654040188, a2: 0.293048143387, a3: -0.0143755571917, a4: -1.86739754677, a5: -0.0157163050026, a6: -0.585920929909, a7: 1.92783629894}" '''

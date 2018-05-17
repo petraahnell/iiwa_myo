@@ -1,11 +1,13 @@
 #!/usr/bin/env python
 
-down=-60
-up=-102
+palm_down=-30
+palm_up=-58
 
-roll_lim = down+(up-down)/2
-pitch_lim = -10
-force_y_lim = -20
+pitch_handover = 11
+
+roll_lim = palm_down+(palm_up-palm_down)/2
+pitch_lim = pitch_handover + 20
+force_y_lim = -10
 torque_x_lim = 1.2
 force_z_lim = 5
 
