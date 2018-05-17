@@ -16,6 +16,8 @@ find_package(catkin REQUIRED COMPONENTS
   iiwa_ros
   cmake_modules
   geometry_msgs
+  moveit_msgs
+  moveit_ros_planning_interface
 )
 
 ## System dependencies are found with CMake's conventions
@@ -117,6 +119,7 @@ include_directories(
 add_executable(gest_reqGrip scripts/gest_reqGrip.cpp)
 add_executable(gest_jointPos scripts/gest_jointPos.cpp)
 add_executable(gest_gotoHandoverPos scripts/gest_gotoHandoverPos.cpp)
+add_executable(pickup_test scripts/pickup_test.cpp)
 
 ## Add cmake target dependencies of the executable/library
 ## as an example, message headers may need to be generated before nodes
@@ -124,6 +127,7 @@ add_executable(gest_gotoHandoverPos scripts/gest_gotoHandoverPos.cpp)
 add_dependencies(gest_reqGrip iiwa_myo_generate_messages_cpp)
 add_dependencies(gest_jointPos iiwa_myo_generate_messages_cpp)
 add_dependencies(gest_gotoHandoverPos iiwa_myo_generate_messages_cpp)
+add_dependencies(pickup_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Specify libraries to link a library or executable target against
 #target_link_libraries(myo-rawNode
@@ -136,6 +140,9 @@ target_link_libraries(gest_jointPos
   ${catkin_LIBRARIES}
 )
 target_link_libraries(gest_gotoHandoverPos
+  ${catkin_LIBRARIES}
+)
+target_link_libraries(pickup_test
   ${catkin_LIBRARIES}
 )
 

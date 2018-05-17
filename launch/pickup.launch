@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<launch>
+
+  <!--include file="$(find iiwa_moveit)/launch/moveit_planning_execution.launch">
+    <arg name="sim" value="true"/>
+  </include-->
+  <node name="pickup" pkg="iiwa_myo" type="pickup" ns="iiwa" respawn="false" output="screen">
+  </node>
+
+</launch>
