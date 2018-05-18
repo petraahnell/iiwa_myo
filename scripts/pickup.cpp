@@ -24,7 +24,7 @@ int main(int argc, char **argv)
   std::string movegroup_name = "manipulator";
   moveit::planning_interface::MoveGroup group(movegroup_name);
 
-  group.setPlanningTime(0.5);
+  group.setPlanningTime(5.0);
   group.setPlannerId(movegroup_name+"[RRTConnectConfigDefault]");
   group.setEndEffectorLink("iiwa_link_ee");
 
@@ -38,35 +38,24 @@ int main(int argc, char **argv)
   ROS_INFO("Reference frame: %s", group.getEndEffectorLink().c_str());
 
   std::vector<double> joint_target;
+  joint_target.push_back(-0.5232);
+  joint_target.push_back(0.3233);
   joint_target.push_back(0);
-  joint_target.push_back(0.809746382194823);
-  joint_target.push_back(0);
-  joint_target.push_back(-1.355374742864191);
-  joint_target.push_back(0);
-  joint_target.push_back(0.933131840114064);
-  joint_target.push_back(0);
+  joint_target.push_back(-1.7054);
+  joint_target.push_back(-0.0001);
+  joint_target.push_back(1.1114);
+  joint_target.push_back(1.4091);
   group.setStartStateToCurrentState();
   group.setJointValueTarget(joint_target);  
 /*
-  iiwa_msgs::JointQuantity target;
-  target.a1 = 0;
-  target.a2 = 0.809746382194823;
-  target.a3 = 0;
-  target.a4 = -1.355374742864191;
-  target.a5 = 0;
-  target.a6 = 0.933131840114064;
-  target.a7 = 0;
-  group.setStartStateToCurrentState();
-  group.setJointValueTarget(target);
-
   geometry_msgs::Pose target_pose1;
-  target_pose1.position.x = 0.626522;
-  target_pose1.position.y = 5.98164e-05;
-  target_pose1.position.z = 0.266002;
-  target_pose1.orientation.x = -6.99428e-05;
-  target_pose1.orientation.y = 0.999958;
-  target_pose1.orientation.z = -3.07521e-05;
-  target_pose1.orientation.w = -0.00916401;
+  target_pose1.position.x = 0.428;
+  target_pose1.position.y = -0.246;
+  target_pose1.position.z = 0.356;
+  target_pose1.orientation.x = 0.832;
+  target_pose1.orientation.y = 0.555;
+  target_pose1.orientation.z = -0.0036;
+  target_pose1.orientation.w = -0.0055;
   group.setStartStateToCurrentState();
   group.setJointValueTarget(target_pose1);
 */
@@ -78,11 +67,11 @@ int main(int argc, char **argv)
   sleep(5.0);
   
   group.move();
+  sleep(5.0);
 
   geometry_msgs::Pose target_pose1;
   target_pose1 = group.getCurrentPose().pose;
   target_pose1.position.z -= 0.1;
-  group.setStartStateToCurrentState();
   group.setPoseTarget(target_pose1);
 
   group.setMaxVelocityScalingFactor(0.01);
