@@ -18,6 +18,8 @@ find_package(catkin REQUIRED COMPONENTS
   geometry_msgs
   moveit_msgs
   moveit_ros_planning_interface
+  sensor_msgs
+  tf
 )
 
 ## System dependencies are found with CMake's conventions
@@ -120,6 +122,19 @@ add_executable(gest_reqGrip scripts/gest_reqGrip.cpp)
 add_executable(gest_jointPos scripts/gest_jointPos.cpp)
 add_executable(gest_gotoHandoverPos scripts/gest_gotoHandoverPos.cpp)
 add_executable(pickup scripts/pickup.cpp)
+add_executable(camera_control scripts/camera_control.cpp)
+add_executable(camera_control2 scripts/camera_control2.cpp)
+add_executable(arm_imitation scripts/arm_imitation.cpp)
+add_executable(arm_imitation_gripper scripts/arm_imitation_gripper.cpp)
+add_executable(arm_imitation_gripper2 scripts/arm_imitation_gripper2.cpp)
+add_executable(arm_adjust scripts/arm_adjust.cpp)
+add_executable(calibration scripts/calibration.cpp)
+add_executable(init_robot scripts/init_robot.cpp)
+add_executable(cobra_init scripts/cobra_init.cpp)
+add_executable(camera_test scripts/camera_test.cpp)
+add_executable(robot_delay_test scripts/robot_delay_test.cpp)
+add_executable(ori_drift_test scripts/ori_drift_test.cpp)
+add_executable(shaky_robot scripts/shaky_robot.cpp)
 
 ## Add cmake target dependencies of the executable/library
 ## as an example, message headers may need to be generated before nodes
@@ -145,7 +160,45 @@ target_link_libraries(gest_gotoHandoverPos
 target_link_libraries(pickup
   ${catkin_LIBRARIES}
 )
-
+target_link_libraries(camera_control
+  ${catkin_LIBRARIES}
+)
+target_link_libraries(camera_control2
+  ${catkin_LIBRARIES}
+)
+target_link_libraries(arm_imitation
+  ${catkin_LIBRARIES}
+)
+target_link_libraries(arm_imitation_gripper
+  ${catkin_LIBRARIES}
+)
+target_link_libraries(arm_imitation_gripper2
+  ${catkin_LIBRARIES}
+)
+target_link_libraries(arm_adjust
+  ${catkin_LIBRARIES}
+)
+target_link_libraries(calibration
+  ${catkin_LIBRARIES}
+)
+target_link_libraries(init_robot
+  ${catkin_LIBRARIES}
+)
+target_link_libraries(cobra_init
+  ${catkin_LIBRARIES}
+)
+target_link_libraries(camera_test
+  ${catkin_LIBRARIES}
+)
+target_link_libraries(robot_delay_test
+  ${catkin_LIBRARIES}
+)
+target_link_libraries(ori_drift_test
+  ${catkin_LIBRARIES}
+)
+target_link_libraries(shaky_robot
+  ${catkin_LIBRARIES}
+)
 
 #############
 ## Install ##

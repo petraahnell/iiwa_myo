@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<launch>
+    <!-- Argument for the "myo-rawNode" taken from the myo.launch-file !-->     
+    <arg name="port" default="/dev/ttyACM0" doc="Port used by the Myo dongle. Check it with 'ls /dev/' and look for ttyACM0 for instance. You need to provide the full path." />
+    
+    <!-- Nodes to launch !-->
+    <node name="myo_raw" pkg="ros_myo" type="myo-rawNode.py" args="$(arg port)" />
+    <node name="openni_tracker" pkg="openni_tracker" type="openni_tracker" output="screen"/> 
+    <arg name="griphardt" default="/dev/ttyUSB0"/>
+    <node name="robotiq_c_model_control" pkg="robotiq" type="CModelRtuNode.py" args="$(arg griphardt)" />
+
+    <node name="filter" pkg="iiwa_myo" type="filter2.py" />
+    <node name="camera_control" pkg="iiwa_myo" type="camera_control2" />
+    <node name="arm_imitation_gripper" pkg="iiwa_myo" type="arm_imitation_gripper2" output="screen"/>
+    <node name="calibration" pkg="iiwa_myo" type="calibration" output="screen"/>
+
+</launch>
